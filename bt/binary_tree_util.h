@@ -58,6 +58,9 @@ int insert(tree **root, int value)
 // BST
 tree * create_random_tree(int n, int min, int max)
 {
+	if( n > (max-min +1)  ) // no such BST is possible
+		return NULL;
+
 	tree  *t = 0;
 	srand(time(NULL));
 	while(n--) 
@@ -257,7 +260,7 @@ void balance_tree(tree **root, int n)
 	rotations = n - m;
 	top = *root;
 	G = 0;
-	
+
 	if( rotations )
 		newtop = top->right;
 	else
@@ -289,6 +292,74 @@ void balance_tree(tree **root, int n)
 	// update root of tree
 	if( n > 1 )
 		*root = newtop;
+}
+
+/* BST */
+tree * find_predecessor(tree *root, int value)
+{
+	if( !root )
+		return NULL;
+
+	tree *predecessor = 0;
+	tree *current = root;
+
+	while( current != NULL ) 
+	{
+		if( current->data < value )
+		{ //  right turn can be precessor if value_node's left is null
+			predecessor = current;
+			current = current->right;
+		}
+		else if( current->data > value ) 
+		{
+			current = current->left;
+		}
+		else 
+		{
+			if( current->left != NULL )
+			{
+				predecessor = current->left;
+			}
+			break;
+		}
+	}
+
+	return predecessor;
+}
+
+
+/* BST */
+tree * find_successor(tree *root, int value)
+{
+	if( !root )
+		return NULL;
+
+	tree *successor = 0;
+	tree *current = root;
+
+	while( current != NULL ) 
+	{
+		if( current->data < value )
+		{ 
+			current = current->right;
+		}
+		else if( current->data > value ) 
+		{
+			//  left turn can be successor if value_node's right is null
+			successor = current;
+			current = current->left;
+		}
+		else 
+		{
+			if( current->right != NULL )
+			{
+				successor = current->right;
+			}
+			break;
+		}
+	}
+
+	return successor;
 }
 
 /*

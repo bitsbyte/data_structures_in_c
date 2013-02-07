@@ -89,6 +89,38 @@ void test5(int n, int min, int max)
 	printf("Balanced Tree: \n");
 	balance_tree(&t, n);
 	print_ascii_tree(t);
+	free_tree(t);
+}
+
+// test predecessor & successor of a BST
+void test6(int n, int min, int max)
+{
+	test("Test predecessor: ",6);
+	tree *t = create_random_tree(n, min, max);
+	print_ascii_tree(t);
+	int i;
+	for ( i = min; i <= max	; i = i+10)
+	{
+		tree *predecessor = find_predecessor(t, i);
+		printf("%d's predecessor: ", i);
+		if( predecessor == NULL)
+			printf(" not found\n");
+		else
+			printf(" %d\n", predecessor->data);
+	}
+
+	test("Test successor: ",6);
+	for ( i = min; i <= max	; i = i+10)
+	{
+		tree *successor = find_successor(t, i);
+		printf("%d's successor: ", i);
+		if( successor == NULL)
+			printf(" not found\n");
+		else
+			printf(" %d\n", successor->data);
+	}
+
+	free_tree(t);
 }
 
 int main(int argc, char* argv[])
@@ -108,6 +140,6 @@ int main(int argc, char* argv[])
 	test3(n, min, max);
 	test4(n, min, max);
 	test5(n, min, max);
+	test6(n, min, max);
 	printf("tests complete\n");
-	//free_tree(t);  // test3() deletes whole tree
 }
