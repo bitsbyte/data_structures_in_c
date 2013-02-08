@@ -36,7 +36,7 @@ struct asciinode_struct
 #define MAX_HEIGHT 1000
 int lprofile[MAX_HEIGHT];
 int rprofile[MAX_HEIGHT];
-#define INFINITY (1<<20)
+#define _INFINITY (1<<20)
 #define RESETCOLOR "\033[0m"
 #define BLUE  "\e[4;34m"
 
@@ -63,7 +63,7 @@ asciinode * build_ascii_tree_recursive(tree * t)
   
   if (t == NULL) return NULL;
 
-  node = malloc(sizeof(asciinode));
+  node = (asciinode*) malloc(sizeof(asciinode));
   node->left = build_ascii_tree_recursive(t->left);
   node->right = build_ascii_tree_recursive(t->right);
   
@@ -161,7 +161,7 @@ void compute_edge_lengths(asciinode *node)
     {
       for (i=0; i<node->left->height && i < MAX_HEIGHT; i++) 
       {
-        rprofile[i] = -INFINITY;
+        rprofile[i] = -_INFINITY;
       }
       compute_rprofile(node->left, 0, 0);
       hmin = node->left->height;
@@ -174,7 +174,7 @@ void compute_edge_lengths(asciinode *node)
     {
       for (i=0; i<node->right->height && i < MAX_HEIGHT; i++) 
       {
-        lprofile[i] = INFINITY;
+        lprofile[i] = _INFINITY;
       }
       compute_lprofile(node->right, 0, 0);
       hmin = MIN(node->right->height, hmin);
@@ -274,7 +274,7 @@ void print_ascii_tree(tree * t)
   compute_edge_lengths(proot);
   for (i=0; i<proot->height && i < MAX_HEIGHT; i++) 
   {
-    lprofile[i] = INFINITY;
+    lprofile[i] = _INFINITY;
   }
   compute_lprofile(proot, 0, 0);
   xmin = 0;

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define max(a,b) ( ((a) > (b)) ? (a) : (b) )
+#define MAX(a,b) ( ((a) > (b)) ? (a) : (b) )
 
 int * random_array(int size, int min, int max)
 {

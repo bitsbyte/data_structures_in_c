@@ -1,5 +1,5 @@
-#ifndef _BINARY_TREE_UTIL_H
-#define _BINARY_TREE_UTIL_H
+#ifndef _BINARY_TREELR_UTIL_H
+#define _BINARY_TREELR_UTIL_H 
 
 #include "binary_tree.h"
 #include "../util.h"
@@ -7,21 +7,19 @@
 #include <time.h>  	// for time(NULL)
 #include <limits.h> // for INT_MIN
 #include <math.h>  	// for log() pow()
-
-
 // BST.
-// intial empty tree should be passed with *root value 0.
+// intial empty treelr should be passed with *root value 0.
 // discard duplicate value
-int insert(tree **root, int value)
+int insertlr(treelr **root, int value)
 {
-	tree *r, *prev;
+	treelr *r, *prev;
 
 	if( !root )
 		return -1;
 
 	if( !(*root) ) 
 	{
-		*root = newnode(value,0,0);
+		*root = newnodelr(value,0,0);
 		return (*root == NULL) ? -1 : 0;
 	}
 	else
@@ -40,32 +38,32 @@ int insert(tree **root, int value)
 		}
 
 		if( prev->data < value ) 
-			prev->right = newnode(value, 0, 0);
+			prev->right = newnodelr(value, 0, 0);
 		else
-			prev->left = newnode(value, 0, 0);
+			prev->left = newnodelr(value, 0, 0);
 	}
 
 }
 
 // BST
-tree * create_random_tree(int n, int min, int max)
+treelr * create_random_treelr(int n, int min, int max)
 {
 	if( n > (max-min +1)  ) // no such BST is possible
 		return NULL;
 
-	tree  *t = 0;
+	treelr  *t = 0;
 	srand(time(NULL));
 	while(n--) 
 	{
 		int value  =  (int)(((float)rand()/(float)RAND_MAX)*(max-min) + min);
-		if(insert(&t, value) < 0 ) 
+		if(insertlr(&t, value) < 0 ) 
 			n++; // insert failed may be due to duplicate
 	}
 	return t;
 }
 
 // BST
-tree *search(tree *t, int value)
+treelr *searchlr(treelr *t, int value)
 {
 	while( t != NULL )
 	{
@@ -80,14 +78,14 @@ tree *search(tree *t, int value)
 }
 
 // BST
-void delete_by_copying(tree **root, int value)
+void delete_by_copyinglr(treelr **root, int value)
 {
 	if( !root || !(*root) )
 		return;
 
-	tree *current = *root;
-	tree *parent = 0;
-	tree *predecessor;
+	treelr *current = *root;
+	treelr *parent = 0;
+	treelr *predecessor;
 
 	while( current != NULL && current->data != value )
 	{
@@ -154,9 +152,9 @@ void delete_by_copying(tree **root, int value)
 
    G is null when rotating around tree's root node
  */
-static void rotate_right(tree *G, tree **P)
+static void rotate_rightlr(treelr *G, treelr **P)
 {
-	tree *C = (*P)->left;
+	treelr *C = (*P)->left;
 	(*P)->left = C->right;
 	C->right = (*P);
 	if( G != NULL ) 
@@ -180,9 +178,9 @@ static void rotate_right(tree *G, tree **P)
 
    G is null when rotating around tree's root node
  */
-static void rotate_left(tree *G, tree **P)
+static void rotate_leftlr(treelr *G, treelr **P)
 {
-	tree *C = (*P)->right;
+	treelr *C = (*P)->right;
 	(*P)->right = C->left;
 	C->left = (*P);
 	if( G != NULL ) 
@@ -196,24 +194,24 @@ static void rotate_left(tree *G, tree **P)
 }
 
 // BT/BST:
-// converts a binary tree to a linked list
+// converts a binary treelr to a linked list
 // with node->right pointing to next element.
-void create_backbone(tree **root)
+void create_backbonelr(treelr **root)
 {
 	if( !root || !(*root) )
 		return;
 
-	tree *r = *root;
+	treelr *r = *root;
 	while( r->left != NULL )
-		rotate_right(0, &r);
+		rotate_rightlr(0, &r);
 	
 	*root = r;
-	tree *G = r;
-	tree *P = r->right;
+	treelr *G = r;
+	treelr *P = r->right;
 	while( P != NULL )
 	{
 		while( P->left != NULL )
-			rotate_right(G, &P);
+			rotate_rightlr(G, &P);
 		G = P;
 		P = P->right;
 	}
@@ -224,15 +222,15 @@ void create_backbone(tree **root)
  *	Run DSW algorithm to balance a tree
  */
 
-void balance_tree(tree **root, int n)
+void balance_treelr(treelr **root, int n)
 {
 	if( !root || !(*root) ) 
 		return;
 
-	tree *top, *newtop, *P, *G;
+	treelr *top, *newtop, *P, *G;
 	int m, rotations;
 
-	create_backbone(root);
+	create_backbonelr(root);
 
 	// find closest number of nodes m ( < n ) 
 	// in a completely balanced binary tree
@@ -249,11 +247,11 @@ void balance_tree(tree **root, int n)
 
 	while( rotations-- )
 	{
-		rotate_left(G, &top);
+		rotate_leftlr(G, &top);
 		G = top;
 		top = top->right;
 	}
-	// each iteration halves tree height
+	// each iteration halves treelr height
 	while( m > 1 )
 	{
 		m  = m/2;
@@ -264,7 +262,7 @@ void balance_tree(tree **root, int n)
 		newtop = newtop->right;
 		while( rotations-- )
 		{
-			rotate_left(G, &top);
+			rotate_leftlr(G, &top);
 			G = top;
 			top = top->right;
 		}
@@ -276,13 +274,13 @@ void balance_tree(tree **root, int n)
 }
 
 /* BST */
-tree * find_predecessor(tree *root, int value)
+treelr * find_predecessorlr(treelr *root, int value)
 {
 	if( !root )
 		return NULL;
 
-	tree *predecessor = 0;
-	tree *current = root;
+	treelr *predecessor = 0;
+	treelr *current = root;
 
 	while( current != NULL ) 
 	{
@@ -310,13 +308,13 @@ tree * find_predecessor(tree *root, int value)
 
 
 /* BST */
-tree * find_successor(tree *root, int value)
+treelr * find_successorlr(treelr *root, int value)
 {
 	if( !root )
 		return NULL;
 
-	tree *successor = 0;
-	tree *current = root;
+	treelr *successor = 0;
+	treelr *current = root;
 
 	while( current != NULL ) 
 	{
@@ -344,36 +342,79 @@ tree * find_successor(tree *root, int value)
 }
 
 //BST : O(n)
-tree* find_kth_largest(tree *root, int *k)
+treelr* find_kth_largestlr(treelr *root, int *k)
 {
 	// do reverse inorder and keep decrementing k 
 	// when k reaches 1 , we are at kth largest. 
 	if(!root) 
 		return NULL;
 
-	tree *kth = NULL;
+	treelr *kth = NULL;
 
-	kth = find_kth_largest(root->right, k);
+	kth = find_kth_largestlr(root->right, k);
 	if( kth != NULL ) return kth;
 	if( *k == 1)
 		return root;
 	*k = *k - 1;
-	kth = find_kth_largest(root->left, k);
+	kth = find_kth_largestlr(root->left, k);
 	if( kth != NULL ) return kth;
 
 	return NULL;
 }
 
-//BT/BST
-int max_height(tree *root)
+// BST: O(log(n)) : if tree is  balanced
+
+treelr* find_kth_largest_logn(treelr *root, int k)
 {
-	if( !root )
-		return 0;
-	return max(max_height(root->left)+1, max_height(root->right)+1);
+	if( !root ) 
+		return NULL;
+
+	if( root->re == k )
+		return root;
+	else if( root->re > k )
+		return find_kth_largest_logn(root->right, k);
+	else
+		return find_kth_largest_logn(root->left, k - root->re - 1);
+}
+
+void populate_lr(treelr *t)
+{
+	if(!t) return;
+
+	populate_lr(t->left);
+	populate_lr(t->right);
+
+	if( !t->left && !t->right )
+	{
+		t->le = t->re = 0;
+	}
+	else if( !t->left && t->right != NULL )
+	{
+		t->le = 0;
+		t->re = t->right->re + t->right->le + 1;
+	}
+	else if( t->left != NULL && !t->right  )
+	{
+		t->re = 0;
+		t->le = t->left->re + t->left->le + 1;
+	}
+	else
+	{
+		t->re = t->right->re + t->right->le + 1;
+	 	t->le = t->left->re + t->left->le + 1;	
+	}
 }
 
 //BT/BST
-void dfs(tree *root, tree *n, void (*visit)(tree *n), void (*unvisit)(tree *n), void (*onfound)(tree *n), void (*on_complete)(tree *t))
+int max_heightlr(treelr *root)
+{
+	if( !root )
+		return 0;
+	return max(max_heightlr(root->left)+1, max_heightlr(root->right)+1);
+}
+
+//BT/BST
+void dfslr(treelr *root, treelr *n, void (*visit)(treelr *n), void (*unvisit)(treelr *n), void (*onfound)(treelr *n), void (*on_complete)(treelr *t))
 {
 	if(!root)
 		return;
@@ -384,16 +425,15 @@ void dfs(tree *root, tree *n, void (*visit)(tree *n), void (*unvisit)(tree *n), 
 		if(onfound != NULL)
 			onfound(root);
 
-	dfs(root->left, n, visit, unvisit, onfound, on_complete);
+	dfslr(root->left, n, visit, unvisit, onfound, on_complete);
 
-	dfs(root->right, n, visit, unvisit, onfound, on_complete);
+	dfslr(root->right, n, visit, unvisit, onfound, on_complete);
 
 	if( unvisit != NULL )
 		unvisit(root);
 	if( on_complete != NULL)
 		on_complete(root);
 }
-
 
 
 #endif
