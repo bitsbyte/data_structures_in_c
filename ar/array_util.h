@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define MAX(a,b) ( ((a) > (b)) ? (a) : (b) )
+//#define MAX(a,b) ( ((a) > (b)) ? (a) : (b) )
 
 int * random_array(int size, int min, int max)
 {
@@ -77,4 +77,42 @@ void shuffle(int *a, int size)
 	}
 }
 
+int** alloc_2d_array(int row, int col)
+{
+	if( row <= 0 || col <= 0 )
+		return NULL;
+
+	int **a = (int**) calloc(row, sizeof(int*)); //new int*[row]();
+	int i;
+	for( i = 0 ; i < row ; ++i)
+		a[i] = (int*) calloc(col, sizeof(int)); //new int[col]();
+	return a;
+}
+
+void dealloc_2d_array(int **a, int row)
+{
+	if(!a || row <= 0 ) 
+		return;
+	int i;
+	for( i = 0 ; i < row; ++i)
+		free(a[i]);//delete [] a[i];
+	free(a); // delete [] a;
+}
+
+void print_2d_array(int **a, int row, int col)
+{
+	if(!a || row <= 0 || col <= 0 )
+		return;
+	printf("\n");
+	int i,j;
+	for(  i = 0 ; i < row; ++i)
+	{
+		for( j = 0 ; j < col; ++j)
+			printf(" %d\t", a[i][j]);
+		printf("\n");
+	}
+
+}
+
 #endif
+

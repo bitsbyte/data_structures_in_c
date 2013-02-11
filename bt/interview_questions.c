@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "interview_questions.h"
+#include "../ar/array_util.h"
 #include "binary_tree_util.h"
 #include "binary_treelr_util.h"
 #include "binary_tree_print.h"
@@ -35,7 +36,7 @@ void test_leaf_becomes_root()
 	printf("after hanging upside down about : %d\n", leaf->data);
 
 	tree *newroot =	hold_leaf_tree_upside_down(r, leaf);
-	print_ascii_tree(newroot);	
+	print_ascii_tree(newroot);
 	free_tree(newroot);
 }
 
@@ -136,6 +137,137 @@ void test_find_kth_largest_logn()
 	free_treelr(t);
 }
 
+void test_find_lca()
+{
+	test("find lca ",8);
+	tree *t = create_random_tree(20,1,25);
+	tree *p, *q;
+	print_ascii_tree(t);
+	srand(time(NULL));
+	for(int i = 1 ; i <= 24; ++i)
+	{
+		p = search(t, rand() % 24);
+		q = search(t, rand() % 25);
+		if( !p && !q )
+			continue;
+		cout << " lca of " << ( p != NULL ? p->data : -1 ) << " and " << ( q != NULL ? q->data : -1 );
+		tree *lca = find_lca(t, p, q);
+		cout << " : " << ( lca != NULL ? lca->data : -1 ) << endl;
+	}
+	free_tree(t);
+}
+
+void test_find_lca_in_bst()
+{
+	test("find lca in bst",9);
+	tree *t = create_random_tree(20,1,25);
+	int p,q;
+	print_ascii_tree(t);
+	srand(time(NULL));
+	for(int i = 0 ; i <= 10; ++i)
+	{
+		p =  rand() % 100;
+		q =  rand() % 100;
+		cout << " lca of " << p << " and " << q;
+		tree *lca = find_lca_in_bst(t, p, q);
+		cout << " : " << ( lca != NULL ? lca->data : -1 ) << endl;
+	}
+	free_tree(t);
+}
+
+void test_find_max_sum_from_leaf_to_another_leaf()
+{
+	test("find max sume from one leaft to another ",8);
+	tree *t  = create_random_tree(10,0,20);
+	print_ascii_tree(t);
+	int max = INT_MIN;
+	find_max_sum_from_leaf_to_leaf(t,&max);
+	cout << "max sum from one leaf to another: " << max << endl;
+	free_tree(t);
+}
+
+void test_generate_ancestor_matrix()
+{
+	test("generate ancestor matrix ",9);
+	int _n = 5;
+	tree *t = create_random_tree(_n,0,20);
+	print_ascii_tree(t);
+	generate_ancestor_matrix(t,_n);
+	
+	cout << "data\t: index \n" ;
+	for(auto& x: _index)
+	{
+		cout << x.first->data <<  "\t: " << x.second << endl;
+	}
+	cout << " Ancestor Matrix : \n";
+	print_2d_array(A,_n,_n);
+	dealloc_2d_array(A,_n);
+	free_tree(t);
+}
+
+void test_is_tree_balanced()
+{
+	test("is tree balanced: ",10);
+	tree *t = create_random_tree(5,0,20);
+	print_ascii_tree(t);
+	int height  = 0;
+	int isbalanced = is_balanced(t, &height);
+	if( isbalanced )
+		cout << "Balanced\n";
+	else
+		cout << "NOT Balanced\n";
+	free_tree(t);
+}
+
+void test_print_all_paths_with_given_sum()
+{
+	test("print all paths in tree with given sum ",11);
+	tree *t = create_random_tree(10,0,100);
+	//intentionally insert 0 , so that for a given sum two
+	// path will be printed one with 0 and one without 0
+	insert(&t,0);
+	print_ascii_tree(t);
+	for(int i = 10 ; i <= 100 ; i = i + 10)
+	{
+		cout << " searching path with sum : " << i << endl;
+		print_all_paths_with_sum_k(t,i);
+	}
+	free_tree(t);
+}
+
+void test_convert_bt_to_dll()
+{
+	test("convert bt to dll : ",12);
+	tree *t = create_random_tree(5,1,100);
+	print_ascii_tree(t);
+	convert_bt_to_dll(t);
+	tree *prev = 0;
+	tree *curr = head;
+	cout << " dll in forward direction : \n";
+	while( curr != NULL )
+	{
+		prev = curr;
+		cout <<  curr->data << " ";
+		curr = curr->right;
+	}
+	cout << "\ndll in reverse direction : \n";
+	while( prev != NULL )
+	{
+		cout << prev->data << " ";
+		prev = prev->left;
+	}
+	cout << endl;
+	// delete dll
+	tree *next = head->right;
+	while( head )
+	{
+		free(head);
+		head = next;
+		if( next != NULL)
+			next = next->right;
+	}
+}
+
 int main(int argc, char* argv[])
 {
   test_level_order();
@@ -145,6 +277,13 @@ int main(int argc, char* argv[])
   test_connect_next_right();
   test_find_kth_largest();
   test_find_kth_largest_logn();
+  test_find_max_sum_from_leaf_to_another_leaf();
+  test_find_lca(); // O(n)
+  test_find_lca_in_bst(); // O(log(n)) for balanced tree
+  test_generate_ancestor_matrix();
+  test_is_tree_balanced();
+  test_print_all_paths_with_given_sum();
+  test_convert_bt_to_dll();
   return 0;
 }
  

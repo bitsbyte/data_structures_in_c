@@ -3,8 +3,11 @@
 
 #include <stdio.h>
 #include "binary_tree_util.h"
+#include "../ar/array_util.h"
 #include <vector> 
 #include <iostream>
+#include <unordered_map>
+
 
 using namespace std;
 
@@ -259,5 +262,200 @@ void connect_nextright(treenr *t)
 		connect();
 	}
 }
+
+/* Q: http://www.careercup.com/question?id=15028720
+ * Given a binary tree, such that each node contains a number. 
+ * Find the maximum possible sum in going from one leaf node to another.
+
+  node->re is unused
+  node-> le contains max sum from that node to its leaves
+*/
+
+int find_max_sum_from_leaf_to_leaf(tree *root, int *max )
+{
+	if( root == NULL )
+		return 0;
+	
+	int maxl = find_max_sum_from_leaf_to_leaf(root->left, max);
+	int maxr = find_max_sum_from_leaf_to_leaf(root->right, max);
+
+	int max_at_current_node = maxl + maxr + root->data;
+
+	if( *max < max_at_current_node )
+		*max = max_at_current_node;
+
+	return ( (maxl + root->data) > (maxr + root->data)  ? (maxl+root->data):(maxr+root->data) );
+}
+
+
+/* Q:http://www.careercup.com/question?id=15031741
+ * Generate Ancestor Matrix , 
+ * A[i][j] = 1, if i is ancestor of j ( not only immediate one).
+ * i & j are zero based.
+*/
+vector<tree*> visit_stack_am;
+int N;
+static int node_index = 0;
+
+// OUTPUT are below two variables: 
+unordered_map<tree*,int> _index;
+int **A  = 0;
+
+void populate_am()
+{
+	for(int i = 0 ; i < visit_stack_am.size() -1; ++i )
+	{
+		for(int j = i+1; j < visit_stack_am.size() ; ++j )
+		{
+			A[ (int)(_index[ visit_stack_am[i]]) ] [ (int)(_index[visit_stack_am[j]]) ] = 1;
+		}
+	}
+}
+
+void visit3(tree *t)
+{
+	_index[t] = node_index++;
+	visit_stack_am.push_back(t);
+	// if leaf node populate AM
+	if( t->left == NULL && t->right == NULL ) 
+	{
+		populate_am();
+	}
+}
+
+void unvisit3(tree *t)
+{
+	visit_stack_am.pop_back();
+}
+
+void generate_ancestor_matrix(tree* t, int n)
+{
+	N = n;
+	A = alloc_2d_array(n,n);
+	if( !A)
+		cout << "2d array allocation failed !\n";
+	dfs(t, 0, visit3, unvisit3, 0, 0);
+}
+
+
+/* Q: http://www.careercup.com/question?id=12333722
+ * Given a binary tree where each node contains an integer value and a value k,
+ * print all paths which sum upto this value k
+ */
+vector<tree*> visit_stack1;
+vector<int> cumulative_sum;
+int given_sum;
+
+void print_nodes_with_given_sum(int begin)
+{
+	int i;
+	for( i = begin; i < visit_stack1.size(); ++i )
+	{
+		cout << visit_stack1[i]->data << " " ;
+	}
+	cout << endl;
+}
+
+void visit4(tree *t)
+{
+	visit_stack1.push_back(t);
+	if( cumulative_sum.size() == 0 )
+		cumulative_sum.push_back(t->data);
+	else
+	{
+		int previous_sum = cumulative_sum.back();
+		cumulative_sum.push_back(previous_sum + t->data);
+	}
+
+	if( cumulative_sum.back() == given_sum )
+	{
+		print_nodes_with_given_sum(0);
+		if( cumulative_sum.front() == 0)
+			print_nodes_with_given_sum(1);
+	}
+	else
+	{
+		//binary search : 
+		int search = cumulative_sum.back() - given_sum;
+		vector<int>::iterator it;
+		it  = lower_bound(cumulative_sum.begin(),cumulative_sum.end(), search);
+		if( it != cumulative_sum.end() && *it == search)
+		{
+			print_nodes_with_given_sum(it - cumulative_sum.begin() + 1);
+		}
+	}
+	
+}
+
+void on_complete1(tree *t)
+{
+	visit_stack1.pop_back();
+	cumulative_sum.pop_back();
+}
+
+// O(n log(h)) ==> O(n log( log(n)) )
+ void print_all_paths_with_sum_k(tree *root, int k)
+ {
+ 	given_sum = k;
+ 	cumulative_sum.clear();
+ 	visit_stack1.clear();
+ 	dfs(root,0,visit4,0,0,on_complete1);
+ }
+
+
+/* Q: http://www.careercup.com/question?id=12318666
+Flatten a binary tree in the its inorder traversal form. Example if there is a tree like
+01
+0203
+04050607
+
+Flatten it to 04->02->05->01->06->03->07
+Right of 4 should be pointing to 02 and so on.
+The order is inorder traversal order
+I was asked to use Recursion
+*/
+tree *previous = 0;
+tree *head;
+void convert_bt_to_dll(tree *root)
+{
+	if( !root ) 
+		return;
+
+	convert_bt_to_dll(root->left);
+
+	if(!previous)
+	{
+		head = root;
+		root->left = NULL;
+		previous = root;
+	}
+	else
+	{
+		root->left = previous;
+		previous->right = root;
+		previous = root;
+	}
+
+	convert_bt_to_dll(root->right);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif

@@ -343,6 +343,44 @@ tree * find_successor(tree *root, int value)
 	return successor;
 }
 
+
+/* BT / BST */
+tree* find_lca(tree *root, tree* p, tree* q)
+{
+	if(!root)
+		return NULL;
+
+	if( root == p || root == q )
+		return root;
+	else
+	{
+		tree *l = find_lca(root->left, p, q);
+		tree *r = find_lca(root->right, p, q);
+		if( l && r )
+			return root;
+		else if( l )
+			return l;
+		else if( r )
+			return r;
+		else 
+			return NULL;
+	}
+}
+
+/* BST : O(log(n)) */ 
+tree *find_lca_in_bst(tree *root, int small, int big)
+{
+	if( !root )
+		return NULL;
+
+	if( root->data <= big && root->data >= small )
+		return root;
+	else if( root->data > big )
+		return find_lca_in_bst(root->left, small, big);
+	else if( root->data < small )
+		return find_lca_in_bst(root->right, small, big);
+}
+
 //BST : O(n)
 tree* find_kth_largest(tree *root, int *k)
 {
@@ -394,6 +432,31 @@ void dfs(tree *root, tree *n, void (*visit)(tree *n), void (*unvisit)(tree *n), 
 		on_complete(root);
 }
 
+/*
+ * BST/BT: idea: a tree is balanced if
+ * 1)  its left subtre & its right are balanced
+ * 2) diff of max_left_height & max_right_height is at max 1
+ */
+int is_balanced(tree *root, int *height)
+{
+	// empty tree is balanced
+	if(!root) 
+	{
+		*height = 0;
+		return 1;
+	}
 
+	int left_height = 0;
+	int right_height = 0;
+	int is_left_balanced = is_balanced(root->left, &left_height);
+	int is_right_balanced = is_balanced(root->right, &right_height);
+
+	*height = max(left_height,right_height) + 1;
+
+	if( is_left_balanced && is_right_balanced && abs(left_height - right_height) <= 1)
+		return 1;
+	return 0;
+}
 
 #endif
+
