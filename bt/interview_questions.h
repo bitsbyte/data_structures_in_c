@@ -5,6 +5,8 @@
 #include "binary_tree_util.h"
 #include "../ar/array_util.h"
 #include <vector> 
+#include <queue>
+#include <stack>
 #include <iostream>
 #include <unordered_map>
 
@@ -165,30 +167,30 @@ Given a Binary Tree (not BST) with integer values .
 	he wanted an O(n) solution not O(n)+O(n) ie. u can't traverse tree twice .
 */
 
-vector<tree*> stack;
+vector<tree*> stack_;
 vector< vector<tree*> > all_max_paths;
 int max_sum = INT_MIN;
 int sum = 0;
 
 void visit2(tree *n)
 {
-	stack.push_back(n);
+	stack_.push_back(n);
 	sum += n->data;
 	if( max_sum == sum )
 	{
-		all_max_paths.push_back(stack);
+		all_max_paths.push_back(stack_);
 	}
 	else if( max_sum < sum)
 	{
 		max_sum = sum;
 		all_max_paths.clear();
-		all_max_paths.push_back(stack);
+		all_max_paths.push_back(stack_);
 	}
 }
 
 void unvisit2(tree *n)
 {
-	stack.pop_back();
+	stack_.pop_back();
 }
 
 void on_complete(tree *n)
@@ -200,7 +202,7 @@ void find_path_from_root_to_node_with_max_sum(tree *root)
 {
 	if( !root ) 
 		return;
-	stack.clear();
+	stack_.clear();
 	all_max_paths.clear();
 
 	dfs(root, 0, visit2, unvisit2, 0, on_complete);
@@ -439,10 +441,120 @@ void convert_bt_to_dll(tree *root)
 	convert_bt_to_dll(root->right);
 }
 
+/*
+	print bt in zig-zag level order
+*/
+unsigned int alternate;
+void print_zig_zag_bt(tree *root)
+{
+	if(!root)
+		return;
+	alternate = ~0 ;
+	queue<tree*> current_level;
+	stack<tree*> next_level;
 
+	current_level.push(root);
 
+	while(!current_level.empty())
+	{
+		tree *current_node = current_level.front();
+		current_level.pop();
+		cout << current_node->data << " ";
 
+		if( alternate ) // insert children left to right
+		{
+			if( current_node->left )
+				next_level.push(current_node->left);
+			if( current_node->right )
+				next_level.push(current_node->right);
+		}
+		else // insert children right to left
+		{
+			if( current_node->right )
+				next_level.push(current_node->right);
+			if( current_node->left )
+				next_level.push(current_node->left);
+		}
 
+		if( current_level.empty() )
+		{
+			while(!next_level.empty()) 
+			{
+				current_level.push(next_level.top());
+				next_level.pop();
+			}
+			alternate = ~alternate;
+			cout << "\n";
+		}
+
+	}
+
+}
+
+/* Q: http://www.careercup.com/question?id=11231922
+	print vertical sums
+*/
+unordered_map<int,int> vertical_sum;
+int number_of_nodes;
+void find_vertical_sums(tree *root, int width) 
+{
+	if( !root )
+		return;
+
+	vertical_sum[width + number_of_nodes] += root->data; // index will always be positive
+	find_vertical_sums(root->left, width - 1);
+	find_vertical_sums(root->right, width +1);
+}
+
+/* Q: http://www.careercup.com/question?id=11983859
+Given the head of a Binary Search tree, trim the tree, 
+so that all elements in the new tree returned are between the inputs A and B
+*/
+
+tree *newroot; // set it to original root before calling function below
+
+static void trim_bst_recurse(tree *root, tree *parent, int A, int B)
+{
+	if(!root)
+		return;
+
+	tree *nextnode;
+
+	if( root->data < A )
+	{
+		nextnode = root->right;
+		root->right = NULL;
+		free_tree(root);
+		if(parent)
+			parent->left = nextnode;
+		else
+			newroot = nextnode;
+		trim_bst_recurse(nextnode, parent, A, B);
+	}
+	else if(  root->data > B )
+	{
+		nextnode = root->left;
+		root->left = NULL;
+		free_tree(root);
+		if(parent)
+			parent->right = nextnode;
+		else
+			newroot = nextnode;
+		trim_bst_recurse(nextnode, parent, A, B);
+	}
+	else
+	{
+		trim_bst_recurse(root->left, root, A, B);
+		trim_bst_recurse(root->right, root, A, B);
+	}
+}
+
+tree *trim_bst(tree *root, int A, int B)
+{
+	newroot = root;
+	trim_bst_recurse(root, 0, A, B);
+	return newroot;
+}
 
 
 

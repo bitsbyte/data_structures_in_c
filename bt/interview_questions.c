@@ -268,6 +268,65 @@ void test_convert_bt_to_dll()
 	}
 }
 
+void test_print_zig_zag_bt()
+{
+	test("print bt in zig zag manner",13);
+	tree *t = create_random_tree(10,1,100);
+	print_ascii_tree(t);
+	print_zig_zag_bt(t);
+	free_tree(t);
+}
+
+void test_find_vertical_sums()
+{
+	test(" find vertical sums : ",14);
+	tree *t = create_random_tree(7,1,20);
+	print_ascii_tree(t);
+	number_of_nodes = 7;
+	find_vertical_sums(t,0);
+	cout << "vertical sum:\n";
+  	for ( auto it = vertical_sum.begin(); it != vertical_sum.end(); ++it )
+     	cout << " "  << it->second;
+  	cout << endl;
+	free_tree(t);
+}
+
+void test_trim_bst()
+{
+	test("trimming BST : ", 15);
+	int n = 20;
+	int min = 1;
+	int max = 100;
+	int A,B;
+	tree *t;
+
+	// [A,B] within [min, max]
+	t = create_random_tree(n,min,max);
+	print_ascii_tree(t);
+	A = min + 30;
+	B = max -  30;
+	cout << "trimmig anything out of range :  ["<< A << "," << B << "] \ntree data in range : [" << min  << "," << max << "]" << endl;
+	t = trim_bst(t, A, B);
+	print_ascii_tree(t);
+	free_tree(t);
+
+	// [A,B] less than [min,max]
+	t = create_random_tree(n,min,max);
+	A = min - 100;
+	B = min - 1;
+	cout << " A & B less than min & max" << endl;
+	t = trim_bst(t, A, B);
+	print_ascii_tree(t);
+
+	// [A,B] greater than [min,max]
+	t = create_random_tree(n,min,max);
+	A = max +1;
+	B = max + 100;
+	cout <<  " A & B more than min & max " << endl;
+	t = trim_bst(t, A,B);
+	print_ascii_tree(t);
+}
+
 int main(int argc, char* argv[])
 {
   test_level_order();
@@ -284,6 +343,9 @@ int main(int argc, char* argv[])
   test_is_tree_balanced();
   test_print_all_paths_with_given_sum();
   test_convert_bt_to_dll();
+  test_print_zig_zag_bt();
+  test_find_vertical_sums();
+  test_trim_bst();
   return 0;
 }
  
