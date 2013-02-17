@@ -6,7 +6,7 @@
 
 //#define MAX(a,b) ( ((a) > (b)) ? (a) : (b) )
 
-int * random_array(int size, int min, int max)
+int * create_random_array(int size, int min, int max)
 {
 	int i ;
 	srand(time(NULL));
