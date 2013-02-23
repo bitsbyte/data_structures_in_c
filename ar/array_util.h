@@ -114,5 +114,70 @@ void print_2d_array(int **a, int row, int col)
 
 }
 
+void insertionsort(int *ar, int ar_size) 
+{
+	if( !ar || ar_size < 0)
+		return;
+
+    for(int i = 1; i < ar_size; ++i)
+    {
+        int temp = ar[i];
+        int j = i-1;
+        while(j >= 0 && ar[j] > temp)
+        {
+           ar[j+1] = ar[j];
+            --j;
+        }   
+        ar[j+1] = temp;
+    }
+}
+
+
+
+void swap(int *a, int i, int j)
+{
+    int temp = a[i];
+    a[i] = a[j];
+    a[j] = temp;
+}
+
+// O(n) in-place partition for quicksort
+int partition(int *a, int size)
+{
+    if( size == 1)
+        return 0;
+    
+    int small = -1;
+    int current = 0;
+    int pivot = a[0];
+    
+    swap(a,0, size-1);
+    
+    while( current <= size-2)
+    {
+        if( a[current] < pivot )  
+        {
+            ++small;
+            swap(a,current, small);
+        }
+        ++current;
+    }
+    
+    ++small;
+    swap(a,small,size-1);
+    return small;
+}
+
+
+void quicksort(int *a, int size) {
+    
+    if( size <= 1)
+        return;
+    
+    int partition_index = partition(a,size);
+    quicksort(a, partition_index);
+    quicksort(a+partition_index+1, size -(partition_index+1));    
+}
+
 #endif
 
