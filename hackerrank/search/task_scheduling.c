@@ -1,44 +1,42 @@
 #include <cmath>
 #include <cstdio>
 #include <vector>
+#include <queue>
 #include <iostream>
 #include <algorithm>
 using namespace std;
 
-int T;
 typedef struct task
 {
     int di;
     int mi;
 } task;
 
-vector<task> input;
-
-int compare_task(task i, task j)
+class compare_task
 {
-    return (i.di < j.di);
-}
+	public:
+		bool operator()(task i, task j)
+		{
+			return (i.di > j.di);
+		}
+};
 
-void print_task(int size)
-{
-    for(int i =0 ; i < size ; ++i)
-        cout << input[i].di << " ";
-    cout << endl;
-}
+typedef priority_queue<task, vector<task>, compare_task>  taskqueue;
 
-int getMinMax(int size)
+
+int getMinMax(taskqueue  q)
 {
-    sort(input.begin(), input.begin()+size, compare_task);
-//    print_task(size);
    
 		int max_overshoot = 0;
 		int next_begin = 0;
 		int current_overshoot;
 
-		for(int i = 0 ; i < size ; ++i)
+		while(!q.empty())
 		{
-			next_begin = next_begin + input[i].mi;
-			current_overshoot = next_begin - input[i].di;
+			task t = q.top();
+			q.pop();
+			next_begin = next_begin + t.mi;
+			current_overshoot = next_begin - t.di;
 			if( current_overshoot > max_overshoot )
 				max_overshoot = current_overshoot;
 		}
@@ -46,23 +44,33 @@ int getMinMax(int size)
 		return max_overshoot;
 }
 
+void print_q(taskqueue q)
+{
+	cout << "queue: "  ;
+	while(!q.empty())
+	{
+		task t = q.top();
+		q.pop();
+		cout << t.di << " " ;
+	}
+	cout << endl;
+}
+
 int main() {
     /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
-    int i,di,mi;
-    
-    cin >> T;
-    i = T;
-    
-    while(i--)
+		taskqueue input;   
+		int T;
+	
+		cin >> T; 
+    while(T--)
     {
         task t;
         cin >> t.di >> t.mi;
-        input.push_back(t);
+				input.push(t);
+				//print_q(input);
+				cout << getMinMax(input) << endl;
     }
   
-	for(int i = 1 ; i <= input.size(); ++i)  
-	 	cout << getMinMax(i) << endl;   
-    
     return 0;
 }
 
