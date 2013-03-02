@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -7,29 +8,46 @@ typedef unsigned long long ul;
 
 ul get_max_profit(vector<int> &profits, int K)
 {
-	vector<ul> first_row(K+1);
-	vector<ul> second_row(K+1);
+	unordered_map<int, vector<ul>> matrix;
+	for(int i = 0 ; i <= profits.size(); ++i)
+	{
+		matrix[i].resize(K+1);
+	}
+	
+//	vector<ul> first_row(K+1);
+//	vector<ul> second_row(K+1);
 	ul max_prev_row, max_curr_row;
 	int N = profits.size();	
 
-	first_row[0] = 0;
+	//first_row[0] = 0;
+	matrix[1][0] = 0;
 	for(int j = 1 ; j <= K ; ++j )
-		first_row[j] = profits[0];
+//		first_row[j] = profits[0];
+		matrix[1][j] = profits[0];
 
 	max_prev_row = profits[0];
 	for(int row = 2; row <= N ; ++row)
 	{
-		second_row[0] = max_prev_row;
-		max_curr_row = second_row[0];
+		//second_row[0] = max_prev_row;
+		//max_curr_row = second_row[0];
+		
+		matrix[row][0] = max_prev_row;
+		max_curr_row = max_prev_row;
+	
 		for(int col = 1; col <= K ; ++col)
 		{
-			second_row[col] = first_row[col-1] + profits[row-1];
+			//second_row[col] = first_row[col-1] + profits[row-1];
+			matrix[row][col] = matrix[row-1][col-1] + profits[row-1];
+			/*
 			if(max_curr_row < second_row[col])
 				max_curr_row = second_row[col];	
+			*/
+			if(max_curr_row < matrix[row][col])
+				max_curr_row = matrix[row][col];
 		}
 				
 		max_prev_row = max_curr_row;
-		first_row = second_row;
+		//first_row = second_row;
 	}
 	/* // this code is unnecessary, max_curr_row already holds ans
 	ul max_profit = 0;
