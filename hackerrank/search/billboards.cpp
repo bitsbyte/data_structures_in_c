@@ -10,6 +10,10 @@ ul get_max_profit(vector<int> &profits, int K)
 	vector<ul> first_row(K+1);
 	vector<ul> second_row(K+1);
 	ul max_prev_row, max_curr_row;
+	
+	vector<ul> *temp;
+	vector<ul> *first = &first_row;
+	vector<ul> *second = &second_row;
 	int N = profits.size();	
 
 	first_row[0] = 0;
@@ -20,28 +24,20 @@ ul get_max_profit(vector<int> &profits, int K)
 	max_curr_row = max_prev_row = profits[0];
 	for(int row = 2; row <= N ; ++row)
 	{
-		second_row[0] = max_prev_row;
-		max_curr_row = second_row[0];
+		(*second)[0] = max_prev_row;
+		max_curr_row = max_prev_row;
 		for(int col = 1; col <= K ; ++col)
 		{
-			second_row[col] = first_row[col-1] + profits[row-1];
-			if(max_curr_row < second_row[col])
-				max_curr_row = second_row[col];	
+			(*second)[col] = (*first)[col-1] + profits[row-1];
+			if( max_curr_row < (*second)[col] )
+				max_curr_row = (*second)[col];
 		}
 				
 		max_prev_row = max_curr_row;
-		first_row = second_row;
+		temp = first;
+		first = second;
+		second = temp; 
 	}
-	/* // this code is unnecessary, max_curr_row already holds ans
-	ul max_profit = 0;
-	for(int j = 0 ; j <= K ; ++j)
-	{
-		if( max_profit < second_row[j])
-			max_profit = second_row[j];	
-	}
-
-	return max_profit;	
-	*/
 	return max_curr_row;
 }
 
