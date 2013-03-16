@@ -2,7 +2,8 @@
 #include "graph.h"
 #include "depth_first_search.h"
 #include "breadth_first_search.h"
-
+#include "cycle.h"
+#include "two_color.h"
 
 using namespace std;
 
@@ -69,5 +70,11 @@ int main(int argc, char* argv[])
 
 	breadth_first_search bfs2(g2,0);
 	print_paths(g2,bfs2);
+
+	cout << "g1 has cycle ? : " << cycle(g1).has_cycle() << endl;
+	cout << "g2 has cycle ? : " << cycle(g2).has_cycle() << endl;
+	cout << "is g1 bipartite ? : " << two_color(g1).is_bipartite() << endl;
+	cout << "is g2 bipartite ? : " << two_color(g2).is_bipartite() << endl;	
+
 	return  0;
 }
