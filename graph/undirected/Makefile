@@ -6,7 +6,7 @@ test_graph: test_graph.cpp graph.h graph.cpp depth_first_search.h depth_first_se
 	$(CPP)  -o $@ $^  
 
 test_symbol_graph: test_symbol_graph.cpp symbol_graph.cpp graph.cpp  
-	$(CPP) -o $@ $^ -I../ -std=c++0x -g
+	$(CPP) -o $@ $^ -I../../ -std=c++0x -g
 
 clean:
 	rm test_graph test_symbol_graph
