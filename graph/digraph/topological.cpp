@@ -4,16 +4,17 @@
 topological::topological(digraph g):isdag(true)
 {
 		directed_cycle dc(g);
-		if(!dc.has_cycle())
-		{
+		//if(!dc.has_cycle())
+		//{
 			visited.resize(g.v(),0);
 			for(int s = 0; s < g.v(); ++s)
 			{
 				if(!visited[s])
 					dfs(g, s);
 			}
-		}
-		else	
+		//}
+		//else
+		if(dc.has_cycle())	
 			isdag = false;
 }
 
@@ -37,11 +38,13 @@ bool topological::is_dag()
 
 std::stack<int> topological::topological_order()
 {
+  /* //for graphs with cycle , we need topolical order 
+		 // for computing Strongly Connected Components
 	if(!isdag)
 	{
 		while(!reverse_post_order.empty())
 			reverse_post_order.pop();
 	}	
-
+	*/
 	return reverse_post_order;
 }

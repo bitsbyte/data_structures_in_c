@@ -1,5 +1,5 @@
 CPP = g++
-all: test_digraph	test_dfs test_bfs test_directed_cycle test_topological
+all: test_digraph	test_dfs test_bfs test_directed_cycle test_topological test_scc
 
 test_digraph: test_digraph.cpp digraph.h digraph.cpp 
 	$(CPP)  -o $@ $^  
@@ -16,5 +16,8 @@ test_directed_cycle: test_directed_cycle.cpp digraph.h digraph.cpp directed_cycl
 test_topological: test_topological.cpp digraph.h digraph.cpp topological.h topological.cpp directed_cycle.h directed_cycle.cpp symbol_digraph.h symbol_digraph.cpp
 	$(CPP) -o $@ $^ -std=c++0x -I../../
 
+test_scc: test_scc.cpp  scc.h scc.cpp digraph.h digraph.cpp topological.h topological.cpp directed_cycle.h directed_cycle.cpp 
+	$(CPP) -o $@ $^ -std=c++0x -I../../
+
 clean:
-	rm test_digraph test_dfs test_bfs test_directed_cycle test_topological
+	rm test_digraph test_dfs test_bfs test_directed_cycle test_topological test_scc
